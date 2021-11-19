@@ -12,8 +12,8 @@ def gen_pose(x, y, z):
     pose.position.x = x
     pose.position.y = y
     pose.position.z = z
-    pose.orientation.x = 1
-    pose.orientation.y = 1
+    pose.orientation.x = 0
+    pose.orientation.y = 0
     pose.orientation.z = 0
     pose.orientation.w = 0
 
@@ -36,7 +36,7 @@ def main():
     if len(sys.argv) >= 4:
         pose_pub.publish(gen_pose(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3])))
     else:
-        pose_pub.publish(gen_pose(random.uniform(0.75, 3), random.uniform(-1, 1), random.uniform(0, 0.75)))
+        pose_pub.publish(gen_pose(random.uniform(0.75, 2), random.uniform(-1, 1), random.uniform(0, 0.25)))
     
 if __name__ == '__main__':
     main()
