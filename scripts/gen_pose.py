@@ -2,10 +2,13 @@
 
 import sys
 import rospy
-from geometry_msgs.msg import Pose, PoseStamped
-from std_msgs.msg import Header
+from geometry_msgs.msg import Pose, PoseStamped, Vector3
+from visualization_msgs.msg import Marker
+from std_msgs.msg import Header, ColorRGBA
 import random
+
 pose_pub = rospy.Publisher('/contact/pose', PoseStamped, queue_size=10)
+marker_pub = rospy.Publisher('/contact/pose/marker', Marker, queue_size=10)
 
 def gen_pose(x, y, z):
     pose = Pose()
@@ -19,11 +22,19 @@ def gen_pose(x, y, z):
 
     header = Header()
     header.stamp = rospy.Time.now()
-    header.frame_id = 'base_link'
+    header.frame_id = 'camera_rgb_optical_frame'
 
-    ps = PoseStamped()
-    ps.header = header
-    ps.pose = pose
+    ps = PoseStamped(header, pose)
+
+    m = Marker()
+    m.scale = Vector3(2, 2, 2)
+    m.color = ColorRGBA(0, 1, 0, 0.1)
+    m.type = Marker.SPHERE
+    header.stamp = rospy.Time.now()
+    m.header = header
+    m.pose = pose
+
+    marker_pub.publish(m)
 
     return ps
 

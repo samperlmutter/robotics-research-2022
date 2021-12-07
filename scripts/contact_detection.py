@@ -18,17 +18,12 @@ def near_pose(pose, a, b, c):
 def contact_cb(pose):
   points = point_cloud_cb(rospy.wait_for_message('/camera/depth/points', PointCloud2))
   close_points = filter(lambda p: near_pose(pose.pose, p[0], p[1], p[2]), points)
-  rospy.loginfo(len(close_points))
 
   h = Header()
   h.stamp = rospy.Time.now()
   h.frame_id = 'camera_rgb_optical_frame'
-
-  fields = [PointField('x', 0, PointField.FLOAT32, 1),
-            PointField('y', 4, PointField.FLOAT32, 1),
-            PointField('z', 8, PointField.FLOAT32, 1)]
   
-  pc = pc2.create_cloud(h, fields, close_points)
+  pc = pc2.create_cloud_xyz32(h, close_points)
 
   pc_pub.publish(pc)
 
