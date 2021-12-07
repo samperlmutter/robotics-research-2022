@@ -27,8 +27,8 @@ def gen_pose(x, y, z):
     ps = PoseStamped(header, pose)
 
     m = Marker()
-    m.scale = Vector3(2, 2, 2)
-    m.color = ColorRGBA(0, 1, 0, 0.1)
+    m.scale = Vector3(1, 1, 1)
+    m.color = ColorRGBA(0, 1, 0, 0.2)
     m.type = Marker.SPHERE
     header.stamp = rospy.Time.now()
     m.header = header
@@ -47,7 +47,7 @@ def main():
     if len(sys.argv) >= 4:
         pose_pub.publish(gen_pose(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3])))
     else:
-        pose_pub.publish(gen_pose(random.uniform(0.75, 2), random.uniform(-1, 1), random.uniform(0, 0.25)))
+        pose_pub.publish(gen_pose(random.uniform(-0.75, 0.75), 0.3, random.uniform(0.75, 2)))
     
 if __name__ == '__main__':
     main()

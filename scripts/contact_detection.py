@@ -12,7 +12,7 @@ pc_pub = rospy.Publisher('/contact/cloud', PointCloud2, queue_size=10)
 
 
 def near_pose(pose, a, b, c):
-  return ((a - pose.position.x) ** 2) + ((b - pose.position.y) ** 2) + ((c - pose.position.z) ** 2) <= 2 ** 2
+  return ((a - pose.position.x) ** 2) + ((b - pose.position.y) ** 2) + ((c - pose.position.z) ** 2) <= 0.5 ** 2
 
 
 def contact_cb(pose):
