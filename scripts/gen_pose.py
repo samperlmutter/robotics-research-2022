@@ -27,7 +27,7 @@ def gen_pose(x, y, z):
     ps = PoseStamped(header, pose)
 
     m = Marker()
-    m.scale = Vector3(1, 1, 1)
+    m.scale = Vector3(0.2, 0.2, 0.2)
     m.color = ColorRGBA(0, 1, 0, 0.2)
     m.type = Marker.SPHERE
     header.stamp = rospy.Time.now()
