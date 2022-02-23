@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 
 import rospy
-import colorsys
-import math
-from std_msgs.msg import Header, ColorRGBA
+from std_msgs.msg import ColorRGBA
 from geometry_msgs.msg import Pose, PoseStamped, Vector3, Point
-from sensor_msgs.msg import PointCloud2, PointField
+from sensor_msgs.msg import PointCloud2
 from visualization_msgs.msg import Marker
 import sensor_msgs.point_cloud2 as pc2
-from tf.transformations import quaternion_from_euler
 
 pc_pub = rospy.Publisher('/contact/cloud', Marker, queue_size=100)
 pose_proximity_radius = 0.1
@@ -17,16 +14,6 @@ cx = 319.5
 fx = 570.3422
 fy = 319.5
 
-
-def compute_image_pos(pose):
-    depth = 1
-    return (((pose.x * fx) / depth) + cx,
-            ((pose.y * fy) / depth) + cy)
-# make bag file of all topics
-# get distance from pose to camera
-# convert to pixel coords
-# check if nearby pixels are a similar depth
-# color them if yes
 
 def near_pose(pose_pos, point_pos):
     if ((point_pos.x - pose_pos.x) ** 2) + ((point_pos.y - pose_pos.y) ** 2) + (

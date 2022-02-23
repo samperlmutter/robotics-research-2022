@@ -2,13 +2,30 @@
 
 import sys
 import rospy
-from geometry_msgs.msg import Pose, PoseStamped, Vector3
+from geometry_msgs.msg import Pose, PoseStamped, Vector3, Point
 from visualization_msgs.msg import Marker
 from std_msgs.msg import Header, ColorRGBA
 import random
 
+point_pub = rospy.Publisher('/contact/pose/pixel', Point, queue_size=10)
 pose_pub = rospy.Publisher('/contact/pose', PoseStamped, queue_size=10)
 marker_pub = rospy.Publisher('/contact/pose/marker', Marker, queue_size=10)
+cy = 239.5
+cx = 319.5
+fx = 570.3422
+fy = 319.5
+
+
+def compute_image_pos(pose):
+    depth = pose.position.z
+    point = Point()
+
+    point.x = ((pose.position.x * fx) / depth) + cx
+    point.y = ((pose.position.y * fy) / depth) + cy
+    point.z = depth
+
+    point_pub.publish(point)
+
 
 def gen_pose(x, y, z):
     pose = Pose()
@@ -19,6 +36,8 @@ def gen_pose(x, y, z):
     pose.orientation.y = 0
     pose.orientation.z = 0
     pose.orientation.w = 0
+
+    compute_image_pos(pose)
 
     header = Header()
     header.stamp = rospy.Time.now()
