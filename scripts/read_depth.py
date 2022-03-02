@@ -6,18 +6,7 @@ from sensor_msgs.msg import Image
 import numpy as np
 from cv_bridge import CvBridge
 import cv2
-
-cy = 239.5
-cx = 319.5
-fx = 570.3422
-fy = 319.5
-
-
-def compute_world_pos(x, y, depth):
-    return ((x - cx) * depth / fx,
-            (y - cy) * depth / fy,
-            depth,
-            1)
+import util
 
 
 def main():
@@ -30,7 +19,7 @@ def main():
     img_pts = np.empty(cv_img.shape, dtype=object)
     for y in range(len(img_pts)):
         for x in range(len(img_pts[0])):
-            img_pts[y][x] = compute_world_pos(x, y, cv_img[y][x])
+            img_pts[y][x] = util.pixel_to_pose(x, y, cv_img[y][x])
 
     cv_img_gray = np.array((cv_img / max(map(max, cv_img))) * 255, dtype=np.uint8)
     cv_img_gray[int(point.x)][int(point.y)] = 255  # indicate pixel in grayscale img
