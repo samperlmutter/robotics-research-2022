@@ -2,13 +2,14 @@
 
 import sys
 import rospy
-from geometry_msgs.msg import Pose, PoseStamped, Vector3, Point
+from geometry_msgs.msg import Pose, PoseStamped, Vector3
 from visualization_msgs.msg import Marker
 from std_msgs.msg import Header, ColorRGBA
 import random
 import util
+from ee_pose_detection.msg import DepthPixel
 
-point_pub = rospy.Publisher('/contact/pose/pixel', Point, queue_size=10)
+point_pub = rospy.Publisher('/contact/pose/pixel', DepthPixel, queue_size=10)
 pose_pub = rospy.Publisher('/contact/pose', PoseStamped, queue_size=10)
 marker_pub = rospy.Publisher('/contact/pose/marker', Marker, queue_size=10)
 

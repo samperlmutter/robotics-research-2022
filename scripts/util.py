@@ -1,4 +1,5 @@
-from geometry_msgs.msg import Point, Pose
+from geometry_msgs.msg import Pose
+from ee_pose_detection.msg import DepthPixel
 
 cy = 239.5
 cx = 319.5
@@ -9,13 +10,13 @@ fy = 319.5
 # world coord to pixel
 def pose_to_pixel(pose):
     depth = pose.position.z
-    point = Point()
+    pixel = DepthPixel()
 
-    point.x = ((pose.position.x * fx) / depth) + cx
-    point.y = ((pose.position.y * fy) / depth) + cy
-    point.z = depth
+    pixel.x = int(((pose.position.x * fx) / depth) + cx)
+    pixel.y = int(((pose.position.y * fy) / depth) + cy)
+    pixel.depth = depth
 
-    return point
+    return pixel
 
 
 # pixel to world coord
