@@ -24,7 +24,7 @@ def gen_pose(x, y, z):
     pose.orientation.z = 0
     pose.orientation.w = 0
 
-    point_pub.publish(util.pose_to_pixel(pose))
+    point_pub.publish(util.pose_to_pixel(pose.position.x, pose.position.y, pose.position.z))
 
     header = Header()
     header.stamp = rospy.Time.now()
@@ -53,7 +53,7 @@ def main():
     if len(sys.argv) >= 4:
         pose_pub.publish(gen_pose(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3])))
     else:
-        pose_pub.publish(gen_pose(random.uniform(-0.75, 0.75), 0.3, random.uniform(0.75, 2)))
+        pose_pub.publish(gen_pose(random.uniform(-0.5, 0.5), 0.3, random.uniform(0.75, 2)))
 
 
 if __name__ == '__main__':

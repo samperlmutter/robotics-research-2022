@@ -8,12 +8,12 @@ fy = 319.5
 
 
 # world coord to pixel
-def pose_to_pixel(pose):
-    depth = pose.position.z
+def pose_to_pixel(x, y, z):
+    depth = z
     pixel = DepthPixel()
 
-    pixel.x = int(((pose.position.x * fx) / depth) + cx)
-    pixel.y = int(((pose.position.y * fy) / depth) + cy)
+    pixel.x = int(((x * fx) / depth) + cx)
+    pixel.y = int(((y * fy) / depth) + cy)
     pixel.depth = depth
 
     return pixel
