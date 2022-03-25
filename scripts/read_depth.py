@@ -7,9 +7,12 @@ from cv_bridge import CvBridge
 import cv2
 import util
 from ee_pose_detection.msg import DepthPixel
+import math
 
 pose_img_pub = rospy.Publisher('/contact/image', Image, queue_size=10)
-depth_threshold = 0.1
+depth_threshold = 0.2
+search_area = 0.1
+seg_verts = 20
 
 
 def pixel_cb(pixel):
@@ -26,19 +29,18 @@ def pixel_cb(pixel):
     for y in range(len(img_pts)):
         for x in range(len(img_pts[0])):
             img_pts[y][x] = util.pixel_to_pose(x, y, cv_d_img[y][x])
-
+    rospy.loginfo(cv_d_img[pixel.y][pixel.x])
     pixel_pose = util.pixel_to_pose(pixel.x, pixel.y, pixel.depth)
-    pixel_n = util.pose_to_pixel(pixel_pose.position.x, pixel_pose.position.y + depth_threshold, pixel_pose.position.z)
-    pixel_s = util.pose_to_pixel(pixel_pose.position.x, pixel_pose.position.y - depth_threshold, pixel_pose.position.z)
-    pixel_e = util.pose_to_pixel(pixel_pose.position.x - depth_threshold, pixel_pose.position.y, pixel_pose.position.z)
-    pixel_w = util.pose_to_pixel(pixel_pose.position.x + depth_threshold, pixel_pose.position.y, pixel_pose.position.z)
-    pixels = [pixel_n, pixel_e, pixel_s, pixel_w]
-    for p in pixels:
-        rospy.loginfo(p)
-        rospy.loginfo(abs(pixel.depth - p.depth))
-        if abs(pixel.depth - p.depth) > depth_threshold:
-            pixels.remove(p)
 
+    pixels = []
+    for t in range(0, 360, 360//seg_verts):
+        x = pixel_pose.position.x + math.cos(math.radians(t)) * search_area
+        y = pixel_pose.position.y + math.sin(math.radians(t)) * search_area
+        p = util.pose_to_pixel(x, y, pixel_pose.position.z)
+        p.depth = cv_d_img[p.y][p.x]
+        cv_c_img[int(p.y)][int(p.x)] = [255, 0, 0]
+        if abs(pixel.depth - p.depth) <= depth_threshold:
+            pixels.append(p)
     cv_img_gray = np.array((cv_d_img / max(map(max, cv_d_img))) * 255, dtype=np.uint8)
 
     def highlight_pixel(p, color):
@@ -48,17 +50,14 @@ def pixel_cb(pixel):
         else:
             rospy.loginfo(p)
 
-    highlight_pixel(pixel, [255, 255, 255])
-    highlight_pixel(pixel_n, [0, 0, 255])
-    highlight_pixel(pixel_s, [0, 255, 0])
-    highlight_pixel(pixel_e, [255, 0, 0])
-    highlight_pixel(pixel_w, [0, 255, 255])
-
-    pts = np.array([[pixel_n.x, pixel_n.y], [pixel_e.x, pixel_e.y], [pixel_s.x, pixel_s.y], [pixel_w.x, pixel_w.y]], np.int32)
+    pts = np.array([[p.x, p.y] for p in pixels], np.int32)
     pts = pts.reshape((-1, 1, 2))
-    cv2.polylines(cv_c_img, [pts], True, (0, 0, 255))
+    cv2.fillPoly(cv_c_img, [pts], color=(0, 0, 255))
 
-    # d_img = bridge.cv2_to_imgmsg(cv_img_gray, encoding='mono8')
+    highlight_pixel(pixel, [0, 255, 0])
+    for p in pixels:
+        highlight_pixel(p, [255, 0, 0])
+
     c_img = bridge.cv2_to_imgmsg(cv_c_img, encoding='bgr8')
     pose_img_pub.publish(c_img)
 

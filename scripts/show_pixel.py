@@ -23,7 +23,7 @@ if __name__ == '__main__':
             cv_c_img[y + i][x + j] = [0, 0, 255]
     rospy.loginfo(f'pixel: {x}, {y}, {cv_d_img[y][x]}')
     pose = util.pixel_to_pose(x, y, cv_d_img[y][x])
-    rospy.loginfo(f'pose: {pose.position.x}, {pose.position.y}, {pose.position.z}')
+    rospy.loginfo(f'pose: {pose.position.x} {pose.position.y} {pose.position.z}')
 
     cv2.imshow('img', cv_c_img)
     cv2.waitKey(0)
