@@ -14,6 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   visualization_msgs
   message_generation
+  moveit_commander
+  moveit_msgs
+  fetch_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -75,6 +78,7 @@ generate_messages(
   # geometry_msgs
   # sensor_msgs
   std_msgs
+  fetch_msgs
 )
 
 ################################################
