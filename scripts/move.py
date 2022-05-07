@@ -46,20 +46,11 @@ def move(req):
     moveit_robot_state.joint_state = current_joint_state
     move_group.set_start_state(moveit_robot_state)
 
-    dest_pose = Pose()
-    dest_pose.position.x = 0.7
-    dest_pose.position.y = 0
-    dest_pose.position.z = 0.9
-
-    move_group.set_pose_target(dest_pose)
+    move_group.set_pose_target(req.pose.pose)
     plan = move_group.plan()
 
     if not plan:
-        exception_str = """
-            Trajectory could not be planned for a destination of {} with starting joint angles {}.
-            Please make sure target and destination are reachable by the robot.
-        """.format(dest_pose, req.joints_input.joints)
-        raise Exception(exception_str)
+        rospy.logerr(f'Trajectory could not be planned for a destination of {req.pose.pose} with starting joint angles {req.joints_input.joints}')
 
     res = MoverServiceResponse()
     res.trajectories.append(plan[1])
@@ -71,7 +62,7 @@ def move(req):
 
 if __name__ == '__main__':
     moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('move_group_python_interface_tutorial', anonymous=True)
+    rospy.init_node('fetch_moveit', anonymous=True)
 
     s = rospy.Service('fetch_moveit', MoverService, move)
     rospy.spin()
