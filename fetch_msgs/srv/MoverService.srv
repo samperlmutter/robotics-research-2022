@@ -1,0 +1,4 @@
+FetchMoveitJoints joints_input
+geometry_msgs/PoseStamped pose
+---
+RobotTrajectory[] trajectories
